@@ -21,8 +21,10 @@ from rest_framework import routers
 
 from user.api import viewsets as userviewsets
 
-route =routers.DefaultRouter()
+route = routers.DefaultRouter()
 
+route.register(r'user-infos', userviewsets.UserInfoViewSet, basename='UserInfo')
+route.register(r'user-infos/<id>', userviewsets.UserInfoViewSet, basename='UserInfo')
 route.register(r'users', userviewsets.UserViewSet, basename='User')
 
 urlpatterns = [
