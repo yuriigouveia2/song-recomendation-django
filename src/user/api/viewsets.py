@@ -1,8 +1,9 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
-from rest_framework.decorators import action
-from django.contrib.auth.models import User
-from http import HTTPMethod
+from rest_framework.views import APIView
+from rest_framework.decorators import action, api_view
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
 
 from user.api import serializers
 from user import models
@@ -22,11 +23,23 @@ class UserInfoViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
     
-    @action(detail=True, methods=[HTTPMethod.DELETE])
-    def destroy(self, request, *args, **kwargs):
-        print('teste    ')
-        return super().destroy(request, *args, **kwargs)
+
+class UserRegistrationViewSet(generics.CreateAPIView):
+    serializer_class = serializers.UserSerializer
+    permission_classes = [permissions.AllowAny]
+
+class UserLoginViewSet(APIView):
+    
+    @api_view(['POST'])
+    def auth(self, request):
+        user = authenticate(username=request.data['username'], password=request.data['password'])
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
+        else:
+            return Response({'error': 'Invalid credentials'}, status=401)
+
     
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSerializer
-    queryset = User.objects.all()
+    queryset = models.CustomUser.objects.all()

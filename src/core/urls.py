@@ -1,5 +1,5 @@
 """
-URL configuration for api project.
+URL configuration for core project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -24,8 +24,9 @@ from user.api import viewsets as userviewsets
 route = routers.DefaultRouter()
 
 route.register(r'user-infos', userviewsets.UserInfoViewSet, basename='UserInfo')
-route.register(r'user-infos/<id>', userviewsets.UserInfoViewSet, basename='UserInfo')
 route.register(r'users', userviewsets.UserViewSet, basename='User')
+# route.register(r'auth', userviewsets.UserLoginViewSet.as_view(), basename='Auth')
+# route.register(r'create-user', userviewsets.UserRegistrationViewSet, basename='CreateUser')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
